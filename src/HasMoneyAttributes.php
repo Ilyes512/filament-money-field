@@ -3,9 +3,13 @@
 namespace Pelmered\FilamentMoneyField;
 
 use Filament\Infolists\Infolist;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 
+/**
+ * @mixin EvaluatesClosures
+ */
 trait HasMoneyAttributes
 {
     protected Currency $currency;
@@ -24,6 +28,8 @@ trait HasMoneyAttributes
 
     public function currency(string|\Closure|null $currencyCode = null): static
     {
+        $currencyCode = $this->evaluate($currencyCode);
+
         $this->currency = new Currency($currencyCode);
         $currencies = new ISOCurrencies();
 
@@ -36,7 +42,7 @@ trait HasMoneyAttributes
 
     public function locale(string|\Closure|null $locale = null): static
     {
-        $this->locale = $locale;
+        $this->locale = $this->evaluate($locale);
 
         return $this;
     }
